@@ -21,7 +21,7 @@ object JacksonCaseClassModuleBuild extends Build {
 // DEPENDENCY VERSIONS
 //////////////////////////////////////////////////////////////////////////////
 
-  val JACKSON_MODULE_SCALA_VERSION = "2.4.1"
+  val JACKSON_MODULE_SCALA_VERSION = "2.8.4"
   val SCALATEST_VERSION = "2.2.1"
 
 

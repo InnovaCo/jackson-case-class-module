@@ -1,7 +1,7 @@
 package mesosphere.jackson
 
 import com.fasterxml.jackson.module.scala.DefaultScalaModule
-import java.lang.{Double ⇒ JDouble, Integer ⇒ JInt}
+import java.lang.{ Double ⇒ JDouble, Integer ⇒ JInt }
 
 object CaseClassModuleSpec {
   case class Person(name: String, age: JInt)

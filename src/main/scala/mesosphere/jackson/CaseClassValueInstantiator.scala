@@ -1,23 +1,12 @@
 package mesosphere.jackson
 
-import mesosphere.reflect.{ CaseClassFactory, CompanionMetadata }
-
-import com.fasterxml.jackson.databind.{
-  BeanDescription,
-  DeserializationConfig,
-  DeserializationContext,
-  JavaType,
-  PropertyMetadata,
-  PropertyName
-}
-import com.fasterxml.jackson.databind.deser.CreatorProperty
 import com.fasterxml.jackson.databind.deser.std.StdValueInstantiator
-import com.fasterxml.jackson.databind.`type`.{ TypeBindings, TypeFactory }
-
-import scala.collection.immutable.ListMap
+import com.fasterxml.jackson.databind.deser.{ CreatorProperty, SettableBeanProperty }
+import com.fasterxml.jackson.databind._
+import mesosphere.reflect.{ CaseClassFactory, CompanionMetadata }
 import scala.collection.JavaConverters._
+import scala.collection.immutable.ListMap
 import scala.reflect.runtime.universe._
-import scala.util.Try
 
 protected class CaseClassValueInstantiator(
   config: DeserializationConfig,
@@ -70,8 +59,9 @@ protected class CaseClassValueInstantiator(
   private[this] lazy val factory =
     new CaseClassFactory(beanDesc.getBeanClass)
 
-  private[this] lazy val typeBindings =
-    new TypeBindings(config.getTypeFactory, beanDesc.getType)
+  private[this] lazy val typeBindings = {
+    config.getTypeFactory.constructType(beanDesc.getType).getBindings
+  }
 
   private[this] lazy val ctorProps = for {
     prop <- beanDesc.findProperties().asScala
@@ -100,7 +90,7 @@ protected class CaseClassValueInstantiator(
   configureFromObjectSettings(
     null, null, null, null,
     creator.orNull,
-    creator.map(_ => ctorProps.toArray).orNull
+    creator.map(_ => ctorProps.toArray.map(_.asInstanceOf[SettableBeanProperty])).orNull
   )
 
   override def createFromObjectWith(
