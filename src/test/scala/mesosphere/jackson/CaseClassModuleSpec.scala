@@ -9,6 +9,8 @@ object CaseClassModuleSpec {
   case class ComplexDefaults(xs: Seq[JInt] = Seq(1, 2, 3))
   case class NestedDefaults(defaults: ComplexDefaults = ComplexDefaults(Seq(5)))
   case class WithOption(n: Option[JInt])
+  case class WithBoolean(b: Boolean = true)
+  case class WithBooleanOpt(b: Option[Boolean] = Some(true))
   case class OptionDefault(x: Option[Int] = Some(5))
   case class WithArray(a: Array[JInt])
   case class WithArrayDefault(a: Array[JInt] = Array(1, 2, 3))
@@ -85,5 +87,17 @@ class CaseClassModuleSpec extends Spec with JacksonHelpers {
     val expected = GenericHolder(Seq(Defaults(x = 1.0, y = 2.0), Defaults(z = "test")))
 
     deserialize[GenericHolder[Seq[Defaults]]](json) should equal(expected)
+  }
+
+  it should "deserialize boolean with default true value" ignore {
+    val json = "{}"
+
+    deserialize[WithBoolean](json).b shouldBe true
+  }
+
+  it should "deserialize boolean opt" in {
+    val json = "{}"
+
+    println(deserialize[WithBooleanOpt](json).b)
   }
 }
